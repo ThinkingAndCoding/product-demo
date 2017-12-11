@@ -3,21 +3,23 @@
     <div class="form-group">
       <div class="form-group">
         <div class="page-header">
-          表格
+          商品列表
         </div>
         <table class="table table-bordered table-responsive table-striped">
           <thead>
           <tr>
-            <th>时间</th>
-            <th>点击数</th>
-            <th>点击数</th>
+            <th>编号</th>
+            <th>商品名</th>
+            <th>商品描述</th>
+            <th>价格</th>
           </tr>
           </thead>
           <tbody>
           <tr v-for="item in arrayData">
-            <td>{{item.timestamp}}</td>
-            <td>{{item.count}}</td>
-            <td>{{item.count}}</td>
+            <td>{{item.id}}</td>
+            <td>{{item.name}}</td>
+            <td>{{item.description}}</td>
+            <td>{{item.price}}</td>
           </tr>
           </tbody>
         </table>
@@ -112,15 +114,33 @@
 
           //测试数据 随机生成的
           var newPageInfo = [];
-          var time=new Date();
-          for (var i = 0; i < this.pagesize; i++) {
+          const getProduct = this.$http.get('/api/product/');
+          console.log("ok");
+          getProduct
+            .then((res) => {
+              if (res.status === 200) {
+                console.log("ok2");
+                this.pageCurrent = pageIndex;
+                this.arrayData = res.data.result
+                console.log(this.arrayData);
+              } else {
+                this.$message.error('获取列表失败！')
+              }
+            }, (err) => {
+              this.$message.error('获取列表失败！')
+              console.log(err)
+            });
+          console.log("ok3");
+
+          /*for (var i = 0; i < newPageInfo.length; i++) {
             newPageInfo[newPageInfo.length] = {
-              timestamp: time,
-              count: (i + (pageIndex - 1) * 20)
+              id: i+1,
+              name: "test",
+              description: "sfs",
+              price: "58"
             };
-          }
-          this.pageCurrent = pageIndex;
-          this.arrayData = newPageInfo;
+          }*/
+
           //如果当前页首页或者尾页，则上一页首页就不能点击，下一页尾页就不能点击
           if(this.pageCurrent===1){
             this.fDisabled=true;
