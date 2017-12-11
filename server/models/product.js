@@ -8,15 +8,12 @@ const EsClient = elastic.EsClient;
 const Product = ProductDb.import(productModel)
 
 const getProduct = async function () {
-  EsClient.ping({
-    // ping usually has a 3000ms timeout
-    requestTimeout: 1000
+  EsClient.search({
+    q: 'pants'
+  }).then(function (body) {
+    var hits = body.hits.hits;
   }, function (error) {
-    if (error) {
-      console.trace('elasticsearch cluster is down!');
-    } else {
-      console.log('All is well');
-    }
+    console.trace(error.message);
   });
 
   const product = await Product.findAll({
@@ -31,7 +28,20 @@ const createProduct = async function (data) {
     name: data.name,
     description: data.description,
     price: data.price
-  })
+  }).then(result => EsClient.create({
+    index: 'productindex',
+    type: 'producttype',
+    id: result.id,
+    body: {
+      name: data.name,
+      description: data.description,
+      price: data.price
+    }
+  }, function (error, response) {
+    console.log(error);
+    console.log(response);
+  }));
+
   return true
 }
 
