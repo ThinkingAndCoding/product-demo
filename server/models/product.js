@@ -1,10 +1,24 @@
 import db from '../config/db.js' // 引入表结构
+import elastic from '../config/elastic.js'
+
 const productModel = '../schema/product.js'
 const ProductDb = db.Product // 引入数据库
+const EsClient = elastic.EsClient;
 
 const Product = ProductDb.import(productModel)
 
 const getProduct = async function () {
+  EsClient.ping({
+    // ping usually has a 3000ms timeout
+    requestTimeout: 1000
+  }, function (error) {
+    if (error) {
+      console.trace('elasticsearch cluster is down!');
+    } else {
+      console.log('All is well');
+    }
+  });
+
   const product = await Product.findAll({
     attributes: ['id', 'name', 'description', 'price']
   })

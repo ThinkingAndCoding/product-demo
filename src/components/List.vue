@@ -1,10 +1,14 @@
 <template>
+
+
+
   <div class="tTable container body-content">
     <div class="form-group">
       <div class="form-group">
         <div class="page-header">
           商品列表
         </div>
+
         <table class="table table-bordered table-responsive table-striped">
           <thead>
           <tr>
@@ -66,6 +70,7 @@
       </div>
     </div>
   </div>
+
 </template>
 <script >
   export default {
