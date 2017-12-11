@@ -6,8 +6,8 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
 import VueRouter from 'vue-router'
 import axios from 'axios'
-import Login from './components/Login'
 import Product from './components/Product'
+import List from './components/List'
 
 Vue.prototype.$http = axios // 类似于vue-resource的调用方法
 
@@ -19,12 +19,12 @@ const router = new VueRouter({
   base: __dirname,
   routes: [
     {
-      path: '/',
-      component: Login
-    },
-    {
       path: '/product',
       component: Product
+    },
+    {
+      path: '/productlist',
+      component: List
     },
     {
       path: '*',
@@ -37,7 +37,7 @@ router.beforeEach((to, from, next) => {
   const token = 'zd'
   if (to.path === '/') { // 如果是跳转到登录页的
     if (token !== 'null' && token !== null) {
-      next('/todolist') // 如果有token就转向todolist不返回登录页
+      next('/product') // 如果有token就转向todolist不返回登录页
     }
     next() // 否则跳转回登录页
   } else {
