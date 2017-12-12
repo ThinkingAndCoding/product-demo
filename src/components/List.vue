@@ -78,8 +78,7 @@
     },
     methods: {
       showPage () {
-        //测试数据 随机生成的
-        const getProduct = this.$http.get('/api/product/');
+        const getProduct = this.$http.get('/api/product/')
         getProduct
           .then((res) => {
             if (res.status === 200) {
@@ -90,47 +89,47 @@
           }, (err) => {
             this.$message.error('获取列表失败！')
             console.log(err)
-          });
+          })
       },
       searchProduct (content) {
-        if (content == null || content == '') {
-          this.showPage () ;
+        if (content == null || content === '') {
+          this.showPage()
         } else {
           this.$http.get('/api/productone/' + content)
             .then((res) => {
               if (res.status === 200) {
                 let result = res.data.result
-                const product = new Array();
-                for (var i=0; i<result.length; i++){
-                  let obj = {};
-                  obj.name = result[i]._source.name;
-                  obj.description = result[i]._source.description;
-                  obj.price = result[i]._source.price;
-                  obj.id = result[i]._id;
-                  product.push(obj);
+                const product = []
+                for (var i = 0; i < result.length; i++) {
+                  let obj = {}
+                  obj.name = result[i]._source.name
+                  obj.description = result[i]._source.description
+                  obj.price = result[i]._source.price
+                  obj.id = result[i]._id
+                  product.push(obj)
                 }
-                this.arrayData = product;
+                this.arrayData = product
               } else {
                 this.$message.error('查询失败！')
               }
             }, (err) => {
-              this.$message.error('查询失败！');
+              this.$message.error('查询失败！')
               console.log(err)
             })
         }
       },
       update (data) {
-        this.productid = data.id;
-        this.productprice = data.price;
-        this.$refs.updateModal.open();
+        this.productid = data.id
+        this.productprice = data.price
+        this.$refs.updateModal.open()
       },
       saveupdate () {
-        this.$http.put('/api/product/' + this.productid + '/' + this.productprice);
-        this.$refs.updateModal.close();
-        this.showPage();
+        this.$http.put('/api/product/' + this.productid + '/' + this.productprice)
+        this.$refs.updateModal.close()
+        this.showPage()
       },
       insert () {
-        this.$refs.insertModal.open();
+        this.$refs.insertModal.open()
       },
       saveinsert (iname, idescription, iprice) {
         let obj = {
@@ -145,16 +144,15 @@
                 type: 'success',
                 message: '创建成功！'
               })
-              this.$refs.insertModal.close();
-              this.showPage();
+              this.$refs.insertModal.close()
+              this.showPage()
             } else {
               this.$message.error('创建失败！')
             }
           }, (err) => {
             this.$message.error('创建失败！')
             console.log(err)
-          });
-
+          })
       },
       remove (data) {
         this.$http.delete('/api/product/' + data.id)
@@ -163,8 +161,8 @@
               this.$message({
                 type: 'success',
                 message: '任务删除成功！'
-              });
-              this.showPage();
+              })
+              this.showPage()
             } else {
               this.$message.error('任务删除失败！')
             }
@@ -172,9 +170,9 @@
             this.$message.error('任务删除失败！')
             console.log(err)
           })
-    }},
+      }},
     mounted () {
-      this.showPage();
+      this.showPage()
     },
     components: {
       'bootstrap-modal': require('vue2-bootstrap-modal')

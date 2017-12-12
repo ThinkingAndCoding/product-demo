@@ -10,18 +10,6 @@ const getProduct = async function (ctx) {
 
 const getProductone = async function (ctx) {
   const result = await product.getProductone(ctx.params.content) // 通过await “同步”地返回查询结果
-  console.log('=========='+result)
-  // const product = new Array();
-  //
-  //   for (var i=0; i<result.length; i++){
-  //     let obj = {};
-  //     obj.name = result[i]._source.name;
-  //     obj.description = result[i]._source.description
-  //     obj.price = result[i]._source.price
-  //     obj.id = result[i]._id
-  //     product.push(obj);
-  //   }
-  //   console.log(product);
 
   ctx.body = {
     success: true,

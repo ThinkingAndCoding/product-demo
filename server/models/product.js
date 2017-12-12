@@ -3,7 +3,7 @@ import elastic from '../config/elastic.js'
 
 const productModel = '../schema/product.js'
 const ProductDb = db.Product // 引入数据库
-const EsClient = elastic.EsClient;
+const EsClient = elastic.EsClient
 
 const Product = ProductDb.import(productModel)
 
@@ -16,7 +16,6 @@ const getProduct = async function () {
 }
 
 const getProductone = async function (content) {
-
   const product = await EsClient.search({
     index: 'productindex',
     type: 'producttype',
@@ -28,7 +27,7 @@ const getProductone = async function (content) {
               match: {
                 name: {
                   query: content,
-                  boost: "1000"
+                  boost: '1000'
                 }
               }
             },
@@ -45,7 +44,7 @@ const getProductone = async function (content) {
     }
   })
 
-  return product.hits.hits;
+  return product.hits.hits
 }
 
 const createProduct = async function (data) {
@@ -63,9 +62,9 @@ const createProduct = async function (data) {
       price: data.price
     }
   }, function (error, response) {
-    console.log(error);
-    console.log(response);
-  }));
+    console.log(error)
+    console.log(response)
+  }))
 
   return true
 }
