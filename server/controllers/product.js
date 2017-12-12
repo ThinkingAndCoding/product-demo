@@ -8,6 +8,14 @@ const getProduct = async function (ctx) {
   }
 }
 
+const getProductone = async function (ctx) {
+  const result = await product.getProductone(ctx.params.content) // 通过await “同步”地返回查询结果
+  ctx.body = {
+    success: true,
+    result // 将请求的结果放到response的body里返回
+  }
+}
+
 const createProduct = async function (ctx) {
   const data = ctx.request.body
   const success = await product.createProduct(data)
@@ -37,6 +45,7 @@ const updateProduct = async function (ctx) {
 }
 
 export default {
+  getProductone,
   getProduct,
   createProduct,
   removeProduct,

@@ -8,18 +8,46 @@ const EsClient = elastic.EsClient;
 const Product = ProductDb.import(productModel)
 
 const getProduct = async function () {
-  EsClient.search({
-    q: 'pants'
+  const product = await Product.findAll({
+    attributes: ['id', 'name', 'description', 'price']
+  })
+
+  return product // 返回数据
+}
+
+const getProductone = async function (content) {
+  const product = await EsClient.search({
+    index: 'productindex',
+    type: 'producttype',
+    body: {
+      query: {
+        bool: {
+          should: [
+            {
+              match: {
+                name: {
+                  query: content,
+                  boost: "1000"
+                }
+              }
+            },
+            {
+              match: {
+                description: {
+                  query: content
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
   }).then(function (body) {
     var hits = body.hits.hits;
   }, function (error) {
     console.trace(error.message);
   });
-
-  const product = await Product.findAll({
-    attributes: ['id', 'name', 'description', 'price']
-  })
-
+  console.log(product)
   return product // 返回数据
 }
 
@@ -70,6 +98,7 @@ const updateProduct = async function (id, price) {
 
 export default {
   getProduct,
+  getProductone,
   createProduct,
   removeProduct,
   updateProduct
