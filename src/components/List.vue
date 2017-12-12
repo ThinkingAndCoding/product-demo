@@ -82,6 +82,7 @@
         getProduct
           .then((res) => {
             if (res.status === 200) {
+              console.log('-----------------' + res.data.result[0].price)
               this.arrayData = res.data.result
             } else {
               this.$message.error('获取列表失败！')
@@ -125,8 +126,10 @@
       },
       saveupdate () {
         this.$http.put('/api/product/' + this.productid + '/' + this.productprice)
-        this.$refs.updateModal.close()
-        this.showPage()
+          .then((res) => {
+            this.$refs.updateModal.close()
+            this.showPage()
+          })
       },
       insert () {
         this.$refs.insertModal.open()

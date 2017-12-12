@@ -75,6 +75,11 @@ const removeProduct = async function (id) {
       id
     }
   })
+  EsClient.delete({
+    index: 'productindex',
+    type: 'producttype',
+    id: id
+  })
   return result === 1 // 如果成功删除了记录，返回1，否则返回0
 }
 
@@ -89,6 +94,16 @@ const updateProduct = async function (id, price) {
       }
     }
   )
+  EsClient.update({
+    index: 'productindex',
+    type: 'producttype',
+    id: id,
+    body: {
+      doc: {
+        price: price
+      }
+    }
+  })
   return result[0] === 1 // 返回一个数组，更新成功的条目为1否则为0。由于只更新一个条目，所以只返回一个元素
 }
 
