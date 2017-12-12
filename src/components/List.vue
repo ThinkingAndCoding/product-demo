@@ -7,10 +7,10 @@
           商品列表
         </div>
         <div class="input-group col-md-3" style="margin-top:0px;positon:relative">
-          <input type="text" class="form-control"placeholder="请输入字段名" v-model="content">
+          <input type="text" class="form-control"placeholder="关键字" v-model="content">
           <span class="input-group-btn">
              <button class="btn btn-info btn-search" @click="searchProduct(content)">查找</button>
-             <button class="btn btn-info btn-search" style="margin-left:3px">添加</button>
+             <button class="btn btn-info btn-search" style="margin-left:3px" @click="insert">添加</button>
           </span>
         </div>
         <table class="table table-bordered table-responsive table-striped">
@@ -34,20 +34,33 @@
           </tr>
           </tbody>
         </table>
-
       </div>
     </div>
 
-
-    <bootstrap-modal ref="theModal" :need-header="false" :need-footer="false" :size="large" :opened="myOpenFunc">
+    <bootstrap-modal ref="updateModal" :need-header="true" :need-footer="true" :size="large" >
       <div slot="title">
-        Your title here
+        编辑
       </div>
       <div slot="body">
-        Your body here
+        <input type="hidden" class="form-control" placeholder="id" v-model="productid" >
+        <input type="text" class="form-control" placeholder="价格" v-model="productprice" >
       </div>
       <div slot="footer">
-        Your footer here
+        <button class="btn btn-info btn-search"  @click="saveupdate">保存</button>
+      </div>
+    </bootstrap-modal>
+
+    <bootstrap-modal ref="insertModal" :need-header="true" :need-footer="true" :size="large" >
+      <div slot="title">
+        新增
+      </div>
+      <div slot="body">
+        <input type="text" class="form-control" placeholder="商品名" v-model="iname" >
+        <input type="text" class="form-control" placeholder="描述" v-model="idescription" >
+        <input type="text" class="form-control" placeholder="价格" v-model="iprice" >
+      </div>
+      <div slot="footer">
+        <button class="btn btn-info btn-search"  @click="saveinsert(iname, idescription, iprice)">保存</button>
       </div>
     </bootstrap-modal>
   </div>
@@ -56,9 +69,10 @@
 
 <script >
   export default {
-
     data () {
       return {
+        productid: '',
+        productprice: '',
         arrayData: []
       }
     },
@@ -66,13 +80,10 @@
       showPage () {
         //测试数据 随机生成的
         const getProduct = this.$http.get('/api/product/');
-        console.log("ok");
         getProduct
           .then((res) => {
             if (res.status === 200) {
-              console.log("ok2");
               this.arrayData = res.data.result
-              console.log(this.arrayData);
             } else {
               this.$message.error('获取列表失败！')
             }
@@ -109,12 +120,41 @@
         }
       },
       update (data) {
-        this.$refs.theModal.open();
-        //this.$http.put('/api/product/' + data.id + '/' + data.price)
-
+        this.productid = data.id;
+        this.productprice = data.price;
+        this.$refs.updateModal.open();
       },
-      myOpenFunc () {
-        console.log('hello');
+      saveupdate () {
+        this.$http.put('/api/product/' + this.productid + '/' + this.productprice);
+        this.$refs.updateModal.close();
+        this.showPage();
+      },
+      insert () {
+        this.$refs.insertModal.open();
+      },
+      saveinsert (iname, idescription, iprice) {
+        let obj = {
+          name: iname,
+          description: idescription,
+          price: iprice
+        }
+        this.$http.post('/api/product/', obj)
+          .then((res) => {
+            if (res.status === 200) {
+              this.$message({
+                type: 'success',
+                message: '创建成功！'
+              })
+              this.$refs.insertModal.close();
+              this.showPage();
+            } else {
+              this.$message.error('创建失败！')
+            }
+          }, (err) => {
+            this.$message.error('创建失败！')
+            console.log(err)
+          });
+
       },
       remove (data) {
         this.$http.delete('/api/product/' + data.id)
