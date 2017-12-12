@@ -1,14 +1,18 @@
 <template>
 
-
-
   <div class="tTable container body-content">
     <div class="form-group">
       <div class="form-group">
         <div class="page-header">
           商品列表
         </div>
-
+        <div class="input-group col-md-3" style="margin-top:0px;positon:relative">
+          <input type="text" class="form-control"placeholder="请输入字段名" v-model="content">
+          <span class="input-group-btn">
+             <button class="btn btn-info btn-search" @click="searchProduct(content)">查找</button>
+             <button class="btn btn-info btn-search" style="margin-left:3px">添加</button>
+          </span>
+        </div>
         <table class="table table-bordered table-responsive table-striped">
           <thead>
           <tr>
@@ -16,6 +20,7 @@
             <th>商品名</th>
             <th>商品描述</th>
             <th>价格</th>
+            <th>操作</th>
           </tr>
           </thead>
           <tbody>
@@ -24,162 +29,115 @@
             <td>{{item.name}}</td>
             <td>{{item.description}}</td>
             <td>{{item.price}}</td>
+            <td><button class="btn btn-info btn-search"  @click="update(item)">修改</button>
+              <button class="btn btn-info btn-search" @click="remove(item)">删除</button></td>
           </tr>
           </tbody>
         </table>
-        <div class="pager" id="pager">
-                    <span class="form-inline">
-                        <select class="form-control" v-model="pagesize" v-on:change="showPage(pageCurrent,$event,true)" number>
-                            <option value="10">10</option>
-                            <option value="20">20</option>
-                            <option value="30">30</option>
-                            <option value="40">40</option>
-                        </select>
-                    </span>
-          <span v-for="item in pageCount+1">
-                        <span v-if="item==1" class="btn btn-default" v-on:click="showPage(1,$event)" :class="{'disabled':fDisabled}">
-                            首页
-                        </span>
-                        <span v-if="item==1" class="btn btn-default" v-on:click="showPage(pageCurrent-1,$event)" :class="{'disabled':fDisabled}">
-                            上一页
-                        </span>
-                        <span v-if="item==1" class="btn btn-default" v-on:click="showPage(item,$event)">
-                            {{item}}
-                        </span>
-                        <span v-if="item==1&&item<showPagesStart-1" class="btn btn-default disabled">
-                            ...
-                        </span>
-                        <span v-if="item>1&&item<=pageCount-1&&item>=showPagesStart&&item<=showPageEnd&&item<=pageCount" class="btn btn-default" v-on:click="showPage(item,$event)">
-                            {{item}}
-                        </span>
-                        <span v-if="item==pageCount&&item>showPageEnd+1" class="btn btn-default disabled">
-                            ...
-                        </span>
-                        <span v-if="item==pageCount" class="btn btn-default" v-on:click="showPage(item,$event)"  >
-                            {{item}}
-                        </span>
-                        <span v-if="item==pageCount" class="btn btn-default" v-on:click="showPage(pageCurrent+1,$event)" :class="{'disabled':lDisabled}">
-                            下一页
-                        </span>
-                        <span v-if="item==pageCount" class="btn btn-default" v-on:click="showPage(pageCount,$event)" :class="{'disabled':lDisabled}">
-                            尾页
-                        </span>
-                    </span>
-          <span>{{pageCurrent}}/{{pageCount}}</span>
-        </div>
+
       </div>
     </div>
+
+
+    <bootstrap-modal ref="theModal" :need-header="false" :need-footer="false" :size="large" :opened="myOpenFunc">
+      <div slot="title">
+        Your title here
+      </div>
+      <div slot="body">
+        Your body here
+      </div>
+      <div slot="footer">
+        Your footer here
+      </div>
+    </bootstrap-modal>
   </div>
 
 </template>
+
 <script >
   export default {
 
     data () {
       return {
-        fDisabled: false,
-        lDisabled: false,
-        totalCount: 200,
-        pageCount: 20,
-        pageCurrent: 1,
-        pagesize: 10,
-        showPages: 11,
-        showPagesStart: 1,
-        showPageEnd: 100,
         arrayData: []
       }
     },
     methods: {
-      showPage (pageIndex, $event, forceRefresh) {
-
-        if (pageIndex > 0) {
-          if (pageIndex > this.pageCount) {
-            pageIndex = this.pageCount;
-          }
-          var currentPageCount = Math.ceil(this.totalCount / this.pagesize);
-          if (currentPageCount !== this.pageCount) {
-            pageIndex = 1;
-            this.pageCount = currentPageCount;
-          }
-          else if (this.pageCurrent == pageIndex && currentPageCount == this.pageCount && typeof (forceRefresh) == "undefined") {
-            console.log("not refresh");
-            return;
-          }
-
-          //处理分页点中样式
-          var buttons = $("#pager").find("span");
-          for (var i = 0; i < buttons.length; i++) {
-            if (buttons.eq(i).html() != pageIndex) {
-              buttons.eq(i).removeClass("active");
+      showPage () {
+        //测试数据 随机生成的
+        const getProduct = this.$http.get('/api/product/');
+        console.log("ok");
+        getProduct
+          .then((res) => {
+            if (res.status === 200) {
+              console.log("ok2");
+              this.arrayData = res.data.result
+              console.log(this.arrayData);
+            } else {
+              this.$message.error('获取列表失败！')
             }
-            else {
-              buttons.eq(i).addClass("active");
-            }
-          }
-
-          //测试数据 随机生成的
-          var newPageInfo = [];
-          const getProduct = this.$http.get('/api/product/');
-          console.log("ok");
-          getProduct
+          }, (err) => {
+            this.$message.error('获取列表失败！')
+            console.log(err)
+          });
+      },
+      searchProduct (content) {
+        if (content == null || content == '') {
+          this.showPage () ;
+        } else {
+          this.$http.get('/api/productone/' + content)
             .then((res) => {
               if (res.status === 200) {
-                console.log("ok2");
-                this.pageCurrent = pageIndex;
-                this.arrayData = res.data.result
-                console.log(this.arrayData);
+                let result = res.data.result
+                const product = new Array();
+                for (var i=0; i<result.length; i++){
+                  let obj = {};
+                  obj.name = result[i]._source.name;
+                  obj.description = result[i]._source.description;
+                  obj.price = result[i]._source.price;
+                  obj.id = result[i]._id;
+                  product.push(obj);
+                }
+                this.arrayData = product;
               } else {
-                this.$message.error('获取列表失败！')
+                this.$message.error('查询失败！')
               }
             }, (err) => {
-              this.$message.error('获取列表失败！')
+              this.$message.error('查询失败！');
               console.log(err)
-            });
-          console.log("ok3");
-
-          /*for (var i = 0; i < newPageInfo.length; i++) {
-            newPageInfo[newPageInfo.length] = {
-              id: i+1,
-              name: "test",
-              description: "sfs",
-              price: "58"
-            };
-          }*/
-
-          //如果当前页首页或者尾页，则上一页首页就不能点击，下一页尾页就不能点击
-          if(this.pageCurrent===1){
-            this.fDisabled=true;
-          }else if(this.pageCurrent===this.pageCount){
-            this.lDisabled=true;
-          }else{
-            this.fDisabled=false;
-            this.lDisabled=false;
-          }
-
-          //计算分页按钮数据
-          if (this.pageCount > this.showPages) {
-            if (pageIndex <= (this.showPages - 1) / 2) {
-              this.showPagesStart = 1;
-              this.showPageEnd = this.showPages - 1;
-              console.log("showPage1")
-            }
-            else if (pageIndex >= this.pageCount - (this.showPages - 3) / 2) {
-              this.showPagesStart = this.pageCount - this.showPages + 2;
-              this.showPageEnd = this.pageCount;
-              console.log("showPage2")
-            }
-            else {
-              console.log("showPage3")
-              this.showPagesStart = pageIndex - (this.showPages - 3) / 2;
-              this.showPageEnd = pageIndex + (this.showPages - 3) / 2;
-            }
-          }
-          console.log("showPagesStart:" + this.showPagesStart + ",showPageEnd:" + this.showPageEnd + ",pageIndex:" + pageIndex);
+            })
         }
-      }
-    },
+      },
+      update (data) {
+        this.$refs.theModal.open();
+        //this.$http.put('/api/product/' + data.id + '/' + data.price)
+
+      },
+      myOpenFunc () {
+        console.log('hello');
+      },
+      remove (data) {
+        this.$http.delete('/api/product/' + data.id)
+          .then((res) => {
+            if (res.status === 200) {
+              this.$message({
+                type: 'success',
+                message: '任务删除成功！'
+              });
+              this.showPage();
+            } else {
+              this.$message.error('任务删除失败！')
+            }
+          }, (err) => {
+            this.$message.error('任务删除失败！')
+            console.log(err)
+          })
+    }},
     mounted () {
-      this.showPage(this.pageCurrent, null, true);
+      this.showPage();
+    },
+    components: {
+      'bootstrap-modal': require('vue2-bootstrap-modal')
     },
     computed: {
     }

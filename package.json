@@ -32,7 +32,8 @@
     "supertest": "^3.0.0",
     "vue": "2.5.2",
     "vue-jest": "^1.0.3",
-    "vue-router": "^2.3.1"
+    "vue-router": "^2.3.1",
+    "vue2-bootstrap-modal": "^0.1.14"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",

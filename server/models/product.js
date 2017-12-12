@@ -16,6 +16,7 @@ const getProduct = async function () {
 }
 
 const getProductone = async function (content) {
+
   const product = await EsClient.search({
     index: 'productindex',
     type: 'producttype',
@@ -42,13 +43,9 @@ const getProductone = async function (content) {
         }
       }
     }
-  }).then(function (body) {
-    var hits = body.hits.hits;
-  }, function (error) {
-    console.trace(error.message);
-  });
-  console.log(product)
-  return product // 返回数据
+  })
+
+  return product.hits.hits;
 }
 
 const createProduct = async function (data) {
