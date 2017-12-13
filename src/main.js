@@ -7,7 +7,7 @@ import 'element-ui/lib/theme-default/index.css'
 import VueRouter from 'vue-router'
 import verify from 'vue-verify-plugin'
 import axios from 'axios'
-import Product from './components/Product'
+import Login from './components/Login'
 import List from './components/List'
 
 Vue.prototype.$http = axios // 类似于vue-resource的调用方法
@@ -21,8 +21,8 @@ const router = new VueRouter({
   base: __dirname,
   routes: [
     {
-      path: '/product',
-      component: Product
+      path: '/login',
+      component: Login
     },
     {
       path: '/productlist',
@@ -30,7 +30,7 @@ const router = new VueRouter({
     },
     {
       path: '*',
-      redirect: '/'
+      redirect: '/login'
     }
   ]
 })

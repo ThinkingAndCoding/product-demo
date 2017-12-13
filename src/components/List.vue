@@ -4,7 +4,7 @@
       <div class="form-group">
         <div class="page-header">
           <div class="input-group col-md-3">
-            <input type="text" class="form-control"placeholder="关键字" v-model="content">
+            <input type="text" class="form-control"placeholder="关键字" v-model="content"　@keyup.enter="searchProduct(content)">
             <span class="input-group-btn">
              <button class="btn btn-info btn-search" @click="searchProduct(content)">查找</button>
              <button class="btn btn-info btn-search" style="margin-left:3px" @click="insert">添加</button>
@@ -206,14 +206,14 @@
             if (res.status === 200) {
               this.$message({
                 type: 'success',
-                message: '任务删除成功！'
+                message: '删除成功！'
               })
               this.showPage()
             } else {
-              this.$message.error('任务删除失败！')
+              this.$message.error('删除失败！')
             }
           }, (err) => {
-            this.$message.error('任务删除失败！')
+            this.$message.error('删除失败！')
             console.log(err)
           })
       }},

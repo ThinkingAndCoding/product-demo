@@ -6,6 +6,8 @@ const ProductDb = db.Product // 引入数据库
 const EsClient = elastic.EsClient
 
 const Product = ProductDb.import(productModel)
+const productIndex = 'product_index'
+const productType = 'product_type'
 
 const getProduct = async function () {
   const product = await Product.findAll({
@@ -17,8 +19,8 @@ const getProduct = async function () {
 
 const getProductone = async function (content) {
   const product = await EsClient.search({
-    index: 'productindex',
-    type: 'producttype',
+    index: productIndex,
+    type: productType,
     body: {
       query: {
         bool: {
@@ -53,8 +55,8 @@ const createProduct = async function (data) {
     description: data.description,
     price: data.price
   }).then(result => EsClient.create({
-    index: 'productindex',
-    type: 'producttype',
+    index: productIndex,
+    type: productType,
     id: result.id,
     body: {
       name: data.name,
@@ -76,8 +78,8 @@ const removeProduct = async function (id) {
     }
   })
   EsClient.delete({
-    index: 'productindex',
-    type: 'producttype',
+    index: productIndex,
+    type: productType,
     id: id
   })
   return result === 1 // 如果成功删除了记录，返回1，否则返回0
@@ -95,8 +97,8 @@ const updateProduct = async function (id, price) {
     }
   )
   EsClient.update({
-    index: 'productindex',
-    type: 'producttype',
+    index: productIndex,
+    type: productType,
     id: id,
     body: {
       doc: {
