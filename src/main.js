@@ -5,6 +5,7 @@ import App from './App'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
 import VueRouter from 'vue-router'
+import verify from 'vue-verify-plugin'
 import axios from 'axios'
 import Product from './components/Product'
 import List from './components/List'
@@ -13,6 +14,7 @@ Vue.prototype.$http = axios // 类似于vue-resource的调用方法
 
 Vue.use(ElementUI)
 Vue.use(VueRouter)
+Vue.use(verify)
 
 const router = new VueRouter({
   mode: 'history',

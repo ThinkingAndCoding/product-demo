@@ -33,6 +33,7 @@
     "vue": "2.5.2",
     "vue-jest": "^1.0.3",
     "vue-router": "^2.3.1",
+    "vue-verify-plugin": "^2.0.2",
     "vue2-bootstrap-modal": "^0.1.14"
   },
   "devDependencies": {
